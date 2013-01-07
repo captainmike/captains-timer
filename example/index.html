@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8" />
+  <title>captains-timer.js usage example - works with multiple instances</title>
+  <link rel="stylesheet" href="stylesheets/foundation.min.css">
+  <script src="javascripts/jquery.js"></script>
+  <script src="../cookies.js"></script>
+  <script src="../captains-timer.js"></script>
+  <script>
+    $(document).ready(function() {
+      var timer = captainsTimer.create({
+        sessionMinutes: 1,
+        countDownSeconds: 55,
+        onCountDownBegin: function(second) {
+          $('#timer-panel').slideDown();
+          $('#timer-panel').find('[data-second]').text(second);
+        },
+        onCountDown: function(second) {
+          $('#timer-panel').find('[data-second]').text(second);
+        },
+        onCountDownEnd: function(second) {
+          alert("You're in trouble!");
+        },
+        // abort is called when another timer (timer in another tab for eg.) has fired an event.
+        onCountDownAbort: function(status) {
+          if (status == 'pending') {
+            $('#timer-panel').slideUp();
+          } else {
+            alert("You're in trouble!");
+          }
+        }
+      });
+
+      $('#timer-panel').find('[data-continue]').click(function() {
+        $('#timer-panel').slideUp();
+        timer.extendTimer();
+      });
+
+      $('#timer-panel').find('[data-logout]').click(function() {
+        timer.abort();
+        alert("You're in trouble!");
+      });
+    });
+  </script>
+</head>
+<body>
+  <div id="timer-panel" class='panel callout radius' style='display: none;'>
+    <h2>captains-timer.js</h2>
+    <p>
+      Your session will timeout in <span data-second='true'></span> seconds, please choose to 'Continue' or 'Logout'?
+
+      <a href="javascript:;" data-logout='true' class="round button right">Logout</a>
+      <a href="javascript:;" data-continue='true' class="round button right">Continue</a>
+    </p>
+  </div>
+</body>
+</html>
